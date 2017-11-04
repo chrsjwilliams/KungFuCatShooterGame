@@ -10,7 +10,6 @@ player.__index = player
 
 function player:makePlayer(_world,xPos, yPos) --	whatever parameters you want
 	body = love.physics.newBody(_world, xPos, yPos, "dynamic")
-	print(xPos)
 	-- Create a shape for the body.
 	player_box = love.physics.newRectangleShape(15, 15, 30, 30)
 
@@ -49,7 +48,6 @@ end
 function love.keypressed( key, isrepeat )
 	if (key == "up" and (state == GAME_PLAY or state == GAME_TEST)) then
 		player:Move(0, -moveSpeed)
-		print(body:getX())
 	elseif (key == "down" and (state == GAME_PLAY or state == GAME_TEST)) then
 		player:Move(0, moveSpeed)
 	end

@@ -7,7 +7,6 @@ enemy.__index = enemy
 
 function enemy:makeEnemy(_world,xPos, yPos) --	whatever parameters you want
 	enemy_body = love.physics.newBody(_world, xPos, yPos, "dynamic")
-	print(xPos)
 	-- Create a shape for the body.
 	enemy_box = love.physics.newRectangleShape(15, 15, 30, 30)
 
