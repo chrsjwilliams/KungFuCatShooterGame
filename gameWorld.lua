@@ -1,3 +1,4 @@
+require 'fallingRocks'
 gameWorld = { 
   tileSize = 16,
   width,
@@ -25,8 +26,9 @@ function gameWorld:initGameWorld(_width, _height, _window_Name) --	whatever para
 	tilesetImage:setFilter("nearest", "nearest")
 	self:loadTiles()
 	tilesetBatch = love.graphics.newSpriteBatch(tilesetImage, 1500)
-	world = love.physics.newWorld(0, 0, true)
+	world = love.physics.newWorld(0, 9.15, true)
 	world:setCallbacks(beginContact,endContact)
+	rock = fallingRocks:makeRock(world, 100,50, tileQuads[6])
 	self:buildGameWorld(_width, _height, _window_Name)
 	return self
 end
@@ -62,6 +64,22 @@ function gameWorld:loadTiles()
 	tileQuads[5] =	love.graphics.newQuad(116, 0, 
 					16, 16,
 					tilesetImage:getWidth(), tilesetImage:getHeight())
+	--	Rock 1
+	tileQuads[6] =	love.graphics.newQuad(195, 327, 
+					19, 19,
+					tilesetImage:getWidth(), tilesetImage:getHeight())
+	--	Rock 2
+	tileQuads[7] =	love.graphics.newQuad(213, 325, 
+					16, 16,
+					tilesetImage:getWidth(), tilesetImage:getHeight())
+	--	Rock 3
+	tileQuads[8] =	love.graphics.newQuad(237, 327, 
+					16, 16,
+					tilesetImage:getWidth(), tilesetImage:getHeight())
+	--	Rock 4
+	tileQuads[9] =	love.graphics.newQuad(296, 327, 
+					16, 16,
+					tilesetImage:getWidth(), tilesetImage:getHeight())
 end
 
 
@@ -81,8 +99,38 @@ function gameWorld:update_GAME_TEST(dt) --	whatever parameters you want
 	world:update(dt)
 end
 
-function gameWorld:draw() --	whatever parameters you want
+function gameWorld:drawStartScreen() --	whatever parameters you want
 	love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
+	tilesetBatch:add(tileQuads[6], 150, 150, 0)
+end
+
+function gameWorld:drawGameScreen() --	whatever parameters you want
+	love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
+	tilesetBatch:add(tileQuads[6], 150, 150, 0)
+end
+
+function gameWorld:drawEndScreen() --	whatever parameters you want
+	love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
+	tilesetBatch:add(tileQuads[6], 150, 150, 0)
+end
+
+function gameWorld:drawTestScreen() --	whatever parameters you want
+	love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
+	--tilesetBatch:add(tileQuads[6], 150, 150, 0)
+	love.graphics.draw(tilesetImage, rock:draw())
+end
+
+function gameWorld:draw() --	whatever parameters you want
+	--love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
+	--love.graphics.draw(tilesetImage, rock:draw())
+
+end
+
+function gameWorld:updateTilesetBatch() --	whatever parameters you want
+	tilesetBatch:clear()
+	rock:draw(tilesetBatch, tileQuads)
+
+	tilesetBatch:flush()
 end
 
 function gameWorld:getWidth()

@@ -1,6 +1,7 @@
 require 'gameWorld'
 require 'player'
 require 'enemy'
+require 'fallingRocks'
 
 -- Parts of the tileset used for different tiles
 tileQuads = {} 
@@ -59,6 +60,7 @@ end
 
 
 function love.update(dt)
+	gameWorld1:updateTilesetBatch()
 	updateTilesetBatch()
 	if	(state == GAME_START) then
 		startScreen(dt)
@@ -141,11 +143,10 @@ function drawEndScreen()
 end
 
 function drawTestScreen()
-	gameWorld1:draw()
-	
+	gameWorld1:drawTestScreen()
+
 	entities:add(player1:draw())
-	entities:add(enemy1:draw())
-	
+	entities:add(enemy1:draw())	
 	love.graphics.setColor(255, 255, 255)	
 end
 
