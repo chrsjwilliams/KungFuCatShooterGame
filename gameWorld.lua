@@ -9,20 +9,19 @@ gameWorld = {
 
 gameWorld.__index = gameWorld
 
-function gameWorld:initGameWorld(_width, _height, _window_Name) --	whatever parameters you want
+function gameWorld:initGameWorld(_width, _height, _window_Name, image_atlas) --	whatever parameters you want
 	local self = setmetatable({}, gameWorld)
 	
 
 	love.window.setMode(_width, _height, {resizable=false})
 	love.window.setTitle(_window_Name)
 	love.physics.setMeter(15)
-	
 
 	-- Sets background image 
 	background = love.graphics.newImage('media/iPadMenu_atlas0.png')
 	-- Make nearest neighbor, so pixels are sharp
 	background:setFilter("nearest", "nearest")
-	tilesetImage=love.graphics.newImage('media/play1_atlas0.png')
+	tilesetImage = image_atlas
 	tilesetImage:setFilter("nearest", "nearest")
 	self:loadTiles()
 	tilesetBatch = love.graphics.newSpriteBatch(tilesetImage, 1500)
@@ -116,14 +115,7 @@ end
 
 function gameWorld:drawTestScreen() --	whatever parameters you want
 	love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
-	--tilesetBatch:add(tileQuads[6], 150, 150, 0)
 	love.graphics.draw(tilesetImage, rock:draw())
-end
-
-function gameWorld:draw() --	whatever parameters you want
-	--love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
-	--love.graphics.draw(tilesetImage, rock:draw())
-
 end
 
 function gameWorld:updateTilesetBatch() --	whatever parameters you want

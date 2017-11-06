@@ -25,11 +25,15 @@ state		= GAME_TEST
 --	script, let them know before altering their code.
 function love.load()
 	
+	--	Moved tilesetImage out here in case any other classes need
+	--	to access it. Just pass tilesetImage as a parameter.
+	tilesetImage = love.graphics.newImage('media/play1_atlas0.png')
+
 	text = ""
 	--	Make world here
 	--	All the physics stuff and loading of images for the game world
 	--	shoule be done here
-	gameWorld1 = gameWorld:initGameWorld(600, 300, "Game Name")
+	gameWorld1 = gameWorld:initGameWorld(600, 300, "Game Name", tilesetImage)
 	
 	--	Make Player here
 	--	Everything related to the player should be in player class.
