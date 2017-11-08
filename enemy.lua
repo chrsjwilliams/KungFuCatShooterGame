@@ -1,5 +1,6 @@
 local anim8 = require 'anim8'
 enemy = { 
+
   tileSize = 16
 }
 
@@ -22,7 +23,7 @@ function enemy:makeEnemy(_world,xPos, yPos) --	whatever parameters you want
 
 	enemy_body:setFixedRotation(true)
 
-	enemyImg = love.graphics.newImage("media/player2.png")
+	enemyImg = love.graphics.newImage("media/walker2.png")
 	local g = anim8.newGrid(30, 30, enemyImg:getWidth(), enemyImg:getHeight(), 3)
 	runAnim = anim8.newAnimation(g('1-14',1), 0.05)
 	jumpAnim = anim8.newAnimation(g('15-19',1), 0.1)
