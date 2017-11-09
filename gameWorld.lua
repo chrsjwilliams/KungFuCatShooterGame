@@ -81,6 +81,13 @@ function gameWorld:loadTiles()
 					tilesetImage:getWidth(), tilesetImage:getHeight())
 end
 
+function gameWorld:getTileQuad()
+	return tileQuads[0];
+end
+
+function gameWorld:getWorld()
+	return self.world
+end
 
 function gameWorld:update_GAME_START(dt) --	whatever parameters you want
 	world:update(dt)

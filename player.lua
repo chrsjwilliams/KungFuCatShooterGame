@@ -1,4 +1,6 @@
 local anim8 = require 'anim8'
+require 'bullet'
+require 'gameWorld'
 player = { 
   tileSize = 16,
   xPos,
@@ -45,11 +47,17 @@ end
 function player:Move(x,y)
 	body:setLinearVelocity(x, y)
 end
+function player:shoot()
+bullet:makeBullet(gameWorld:getWorld(), self.xPos, self.yPos, playerImg, 100)
+bullet:draw()
+end
 function love.keypressed( key, isrepeat )
 	if (key == "up" and (state == GAME_PLAY or state == GAME_TEST)) then
 		player:Move(0, -moveSpeed)
 	elseif (key == "down" and (state == GAME_PLAY or state == GAME_TEST)) then
 		player:Move(0, moveSpeed)
+	elseif(key == "space"  and (state == GAME_PLAY or state == GAME_TEST)) then
+		player:shoot()
 	end
 end
 
