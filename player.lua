@@ -52,9 +52,6 @@ end
 function player:update_GAME_START(dt) --	whatever parameters you want
 end
 
-function player:update_GAME_PLAY(dt) --	whatever parameters you want
-end
-
 function player:update_GAME_END(dt) --	whatever parameters you want
 end
 

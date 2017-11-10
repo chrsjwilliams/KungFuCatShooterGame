@@ -33,6 +33,7 @@ function gameWorld:initGameWorld(_width, _height, _window_Name, image_atlas) --	
 	groundPosition = 0
 	bgPos = 0
 	bgm	= love.audio.newSource("media/18-machinae_supremacy-lord_krutors_dominion.mp3", "stream")
+	scrollSpeed = 250
 	return self
 end
 
@@ -97,6 +98,11 @@ end
 
 function gameWorld:update_GAME_START(dt) --	whatever parameters you want
 	self.world:update(dt)
+	if bgPos > -800 then
+		bgPos = bgPos - dt * scrollSpeed
+	else
+		bgPos = 0
+	end
 end
 
 function gameWorld:update_GAME_PLAY(dt) --	whatever parameters you want

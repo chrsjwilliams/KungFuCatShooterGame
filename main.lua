@@ -14,7 +14,7 @@ GAME_START	= 0
 GAME_PLAY	= 1
 GAME_OVER	= 2
 GAME_TEST	= 3
-state		= GAME_PLAY
+state		= GAME_START
 
 --	Main should handle the life cycle of our game.
 --	Ideally ALL state changes should be done through main
@@ -32,7 +32,7 @@ function love.load()
 	--	Make world here
 	--	All the physics stuff and loading of images for the game world
 	--	shoule be done here
-	gameWorld1 = gameWorld:initGameWorld(600, 300, "Game Name", tilesetImage)
+	gameWorld1 = gameWorld:initGameWorld(600, 300, "Kung Fu Cat 3", tilesetImage)
 	
 	--	Make Player here
 	--	Everything related to the player should be in player class.
@@ -52,14 +52,19 @@ function love.load()
 	
 	-- Sets font size to 12
 	
-	mainFont = love.graphics.newFont("media/Flixel.ttf", 10)
-	love.graphics.setFont(mainFont)
+	titleFont = love.graphics.newFont("media/Flixel.ttf", 50)
+	love.graphics.setFont(titleFont)
+
+	gameFont = love.graphics.newFont("media/Flixel.ttf", 10)
+	love.graphics.setFont(gameFont)
 
 	text = "Hello"
-	restartGame()
+	--restartGame()
 end
 
 function restartGame()
+	gameFont = love.graphics.newFont("media/Flixel.ttf", 10)
+	love.graphics.setFont(gameFont)
 	gameWorld1:loadGameWorld()
 	state = GAME_PLAY
 end
@@ -81,8 +86,11 @@ end
 
 function startScreen(dt)
 	gameWorld1:update_GAME_START(dt)
-	player1:update_GAME_START(dt)
-	enemy1:update_GAME_START(dt)
+
+	if love.keyboard.isDown("space") then 
+		state = GAME_PLAY
+	end
+
 end
 
 function prepGameScreen()
@@ -108,6 +116,14 @@ function love.draw()
 
 	if(state == GAME_START) then
 		drawStartScreen()
+		love.graphics.setFont(titleFont)
+		text = "Kung Fu Cat 3:"
+		text = text .. "\n   Feline Fine"
+		
+		love.graphics.print(text, gameWorld1:getWidth()/10, gameWorld1:getWidth()* (1/9))
+		love.graphics.setFont(gameFont)
+		text = "\n\nPress SPACE to Play"
+		love.graphics.print(text, gameWorld1:getWidth()* (7/18), gameWorld1:getWidth()* (3/9))
 	elseif (state == GAME_PLAY) then
 		drawGameScreen()
 		text = "Rat-bots Destroyed: " .. enemiesKilled
@@ -122,11 +138,7 @@ function love.draw()
 end
 
 function drawStartScreen()
-	gameWorld1:draw()
-	
-	entities:add(player1:draw())
-	entities:add(enemy1:draw())
-	
+	gameWorld1:drawStartScreen()
 	love.graphics.setColor(255, 255, 255)
 end
 
@@ -141,9 +153,6 @@ end
 
 function drawEndScreen()
 	gameWorld1:draw()
-	
-	entities:add(player1:draw())
-	entities:add(enemy1:draw())
 	
 	love.graphics.setColor(255, 255, 255)
 end
