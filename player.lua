@@ -2,7 +2,7 @@ local anim8 = require 'anim8'
 require 'bullet'
 require 'gameWorld'
 
-player = {xPos = 0, yPos = 0, width = 100, height = 100, speed = 200}
+player = {xPos = 0, yPos = 0, width = 50, height = 50, speed = 200}
 player.__index = player
 bullets = {}
 
@@ -72,7 +72,7 @@ function player:draw() --	whatever parameters you want
  for index, bullet in ipairs(bullets) do
 	love.graphics.draw(tilesetImage, bullet.img, bullet.xPos, bullet.yPos, -359.75, .5)
 	end
- love.graphics.draw(spaceShitAtlas, shipImg, player.xPos + player.width - 65, player.yPos + 10, 0, -1, 1)
+ love.graphics.draw(spaceShitAtlas, shipImg, player.xPos + player.width - 5, player.yPos + 10, 0, -1, 1)
 end
 
 function player:getMoveSpeed()
