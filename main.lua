@@ -1,7 +1,6 @@
 require 'gameWorld'
 require 'player'
 require 'enemy'
-require 'fallingRocks'
 
 -- Parts of the tileset used for different tiles
 tileQuads = {} 
@@ -45,13 +44,11 @@ function love.load()
 	--	All enemy logic should be handled here. I'm not sure if this
 	--	script is a description of an enemy or an enemy manager
 	--	Enemy is red
-	enemy1 = enemy:makeEnemy(gameWorld1:getWorld(), 50, 50)
+	enemy1 = enemy:load()
 
 	--	We make two draw calls as of now. One for our gameworld, and
 	--	one for our entities (player enemies). We may want to have
 	--	more if we want different layers in our game (ie foreground, background)
-	entityImg = love.graphics.newImage("media/player2.png")
-	entities = love.graphics.newSpriteBatch(entityImg, 1500)
 	
 	-- Sets font size to 12
 	love.graphics.setNewFont(12)
@@ -104,7 +101,7 @@ end
 function testScreen(dt)
 	gameWorld1:update_GAME_TEST(dt)
 	player1:update_GAME_TEST(dt)
-	enemy1:update_GAME_TEST(dt)
+	enemy1:update(dt)
 end
 
 function love.draw()
@@ -149,14 +146,12 @@ end
 function drawTestScreen()
 	gameWorld1:drawTestScreen()
 
-	entities:add(player1:draw())
-	entities:add(enemy1:draw())	
+	enemy1:draw()
 	love.graphics.setColor(255, 255, 255)	
 end
 
 function updateTilesetBatch()
-	entities:clear()
-	entities:flush()	
+
 end
 
 -- This is called every time a collision begin.

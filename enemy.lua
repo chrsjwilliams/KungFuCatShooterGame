@@ -1,58 +1,155 @@
 local anim8 = require 'anim8'
-enemy = { 
 
-  tileSize = 16
-}
+enemy = {}
+
 
 enemy.__index = enemy
+--load enemy image and animation
+function enemy:load()
 
-function enemy:makeEnemy(_world,xPos, yPos) --	whatever parameters you want
-	enemy_body = love.physics.newBody(_world, xPos, yPos, "dynamic")
-	-- Create a shape for the body.
-	enemy_box = love.physics.newRectangleShape(15, 15, 30, 30)
+  walkerImage = love.graphics.newImage("media/walker2.png")
 
-	-- Create fixture between body and shape
-	enemy_fixture = love.physics.newFixture(enemy_body, enemy_box)
+  player = {xPos = 0, yPos = 0, angle = 0, width = 64, height = 64, speed=200, img=walkerImage}
 
-	-- We can now refer to the player using the string "Player"
-	enemy_fixture:setUserData("Enemy")
-  
-	-- Calculate the mass of the body based on attatched shapes.
-	-- This gives realistic simulations.
-	enemy_body:setMassData(enemy_box:computeMass( 1 ))
 
-	enemy_body:setFixedRotation(true)
+  local g = anim8.newGrid(120, 80, walkerImage:getWidth(), walkerImage:getHeight())
+    
+    runAnim = anim8.newAnimation(g('1-6',1), 0.05)
+    AttackAnim = anim8.newAnimation(g('1-6',2), 0.05)
 
-	enemyImg = love.graphics.newImage("media/walker2.png")
-	local g = anim8.newGrid(30, 30, enemyImg:getWidth(), enemyImg:getHeight(), 3)
-	runAnim = anim8.newAnimation(g('1-14',1), 0.05)
-	jumpAnim = anim8.newAnimation(g('15-19',1), 0.1)
-	inAirAnim = anim8.newAnimation(g('1-8',2), 0.1)
-	rollAnim = anim8.newAnimation(g('9-19',2), 0.05)
+    currentAnim = runAnim
 
-	-- Sets current animation
-	currentAnim = inAirAnim
+    spawnTimer = 0
 
-	self:initEnemy()
-	return self
+    spawnTimerMax = 1
+
+    walkerSpeed = 200
+    chargeSpeed = 500
+
+    enemies = {}
+    return self
 end
 
-function enemy:initEnemy() --	whatever parameters you want
+--draw enemy
+function enemy:draw()
+
+  for index, enemy in ipairs(enemies) do
+    currentAnim:draw(enemy.img, enemy.xPos, enemy.yPos, enemy.angle, 1, 1)
+  end
 end
 
-function enemy:update_GAME_START(dt) --	whatever parameters you want
+
+function enemy:update(dt)
+
+    updateEnemies(dt)
+    checkCollisions()
+    currentAnim:update(dt)
 end
 
-function enemy:update_GAME_PLAY(dt) --	whatever parameters you want
+function updateEnemies(dt)
+  if spawnTimer > 0 then
+    spawnTimer = spawnTimer - dt
+  else
+    spawnEnemy()
+  end
+
+  for i=table.getn(enemies), 1, -1 do
+    enemy=enemies[i]
+    enemy.update = enemy:update(dt)
+    currentAnim:draw(walkerImage,enemy.xPos, enemy.yPos,0)
+    if enemy.xPos < -enemy.width then
+      table.remove(enemies, i)
+    end
+  end
 end
 
-function enemy:update_GAME_END(dt) --	whatever parameters you want
+function spawnEnemy()
+  y = love.math.random(0, love.graphics.getHeight() - 64)
+  enemyType = love.math.random(0, 2)
+
+  if enemyType == 0 then
+    enemy = Enemy:new{yPos = y, speed = walkerSpeed, img = walkerImage, update=moveLeft}
+  elseif enemyType == 1 then
+    enemy = Enemy:new{yPos = y, speed = walkerSpeed, img = walkerImage, update=moveToPlayer}
+  else
+    enemy = Enemy:new{yPos = y, speed = walkerSpeed, img = walkerImage, update=chargePlayer}
+  end
+  table.insert(enemies, enemy)
+
+  spawnTimer = spawnTimerMax
 end
 
-function enemy:update_GAME_TEST(dt) --	whatever parameters you want
+Enemy = {xPos = love.graphics.getWidth(), yPos = 0, width = 120, height = 80, angle = 0}
+
+function Enemy:new (o)
+  o = o or {}
+  setmetatable(o, self)
+  self.__index = self
+  return o
 end
 
-function enemy:draw() --	whatever parameters you want
-	love.graphics.setColor(255, 0, 0)
-	return currentAnim:draw(enemyImg, enemy_body:getX(), enemy_body:getY(), enemy_body:getAngle())
+function moveLeft(obj, dt)
+  currentAnim = runAnim
+  obj.xPos = obj.xPos - obj.speed * dt
+  return moveLeft
+end
+
+function moveToPlayer(obj, dt)
+  xSpeed = math.sin(math.rad (60)) * obj.speed
+  ySpeed = math.cos(math.rad (60)) * obj.speed
+  currentAnim = AttackAnim
+  if (obj.yPos - player.yPos) > 10 then
+    obj.yPos = obj.yPos - ySpeed * dt
+    obj.xPos = obj.xPos - xSpeed * dt
+    obj.angle = 0.1
+  elseif (obj.yPos - player.yPos) < -10 then
+    obj.yPos = obj.yPos + ySpeed * dt
+    obj.xPos = obj.xPos - xSpeed * dt
+    obj.angle = -0.1
+  else
+    obj.xPos = obj.xPos - obj.speed * dt
+    obj.angle = 0
+  end
+  return moveToPlayer
+end
+
+function chargePlayer(obj, dt)
+  xDistance = math.abs(obj.xPos - player.xPos)
+  yDistance = math.abs(obj.yPos - player.yPos)
+  distance = math.sqrt(yDistance^2 + xDistance^2)
+  if distance < 150 then
+    obj.speed = chargeSpeed
+    obj.angle = 0
+    return moveLeft
+  end 
+  moveToPlayer(obj, dt)
+  return chargePlayer
+end
+
+-- Helper functions
+
+function checkCollisions()
+  for index, enemy in ipairs(enemies) do
+    if playerAlive and (intersects(player, enemy) or intersects(enemy, player)) then
+      --playerAlive = false
+      break
+    end
+
+    -- for index2, torpedo in ipairs(torpedoes) do
+    --   if intersects(enemy, torpedo) then
+    --     table.remove(enemies, index)
+    --     table.remove(torpedoes, index2)
+    --     break
+    --   end
+    -- end
+  end
+end
+
+function intersects(rect1, rect2)
+  if rect1.xPos < rect2.xPos and rect1.xPos + rect1.width > rect2.xPos and
+     rect1.yPos < rect2.yPos and rect1.yPos + rect1.height > rect2.yPos then
+    return true
+  else
+    return false
+  end
 end
