@@ -107,7 +107,7 @@ end
 
 function endScreen(dt)
 	gameWorld1:update_GAME_END(dt)
-	if love.keyboard.isDown("space") then 
+	if love.keyboard.isDown("up") and state == GAME_OVER then 
 		restartGame()
 		state = GAME_START
 	end
@@ -139,7 +139,9 @@ function love.draw()
 		love.graphics.print(text, gameWorld1:getWidth()/5, gameWorld1:getWidth()* (1/9))
 		love.graphics.setFont(gameFont)
 		text = "\n\nRatbots Killed: " .. enemiesKilled
-		love.graphics.print(text, gameWorld1:getWidth()* (7/18), gameWorld1:getWidth()* (3/9))
+		love.graphics.print(text, gameWorld1:getWidth()* (7/18), gameWorld1:getHeight()* (4/9))
+		text = "\n\nPress UP to Restart"
+		love.graphics.print(text, gameWorld1:getWidth()* (6/18), gameWorld1:getHeight()* (6/9))
 	elseif (state == GAME_TEST) then
 		drawTestScreen()
 	end
