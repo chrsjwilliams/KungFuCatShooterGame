@@ -2,7 +2,7 @@ local anim8 = require 'anim8'
 require 'bullet'
 require 'gameWorld'
 
-player = {xPos = 0, yPos = 0, width = 140, height = 140, speed = 200}
+player = {xPos = 0, yPos = 0, width = 100, height = 100, speed = 200}
 player.__index = player
 bullets = {}
 
@@ -63,7 +63,7 @@ end
 
 function player:draw() --	whatever parameters you want
  love.graphics.setColor(255, 255, 255)
- currentPlayerAnim:draw(playerImg, player.xPos, player.yPos, 0, .5)
+ currentPlayerAnim:draw(playerImg, player.xPos - 40, player.yPos, 0, .5)
  for index, bullet in ipairs(bullets) do
 	love.graphics.draw(tilesetImage, bullet.img, bullet.xPos, bullet.yPos, -359.75, .5)
 	end

@@ -120,7 +120,7 @@ function gameWorld:update_GAME_END(dt) --	whatever parameters you want
 	self.world:update(dt)
 end
 
-function gameWorld:drawStartScreen() --	whatever parameters you want
+function gameWorld:draw() --	whatever parameters you want
 	love.graphics.setColor(125, 125, 125)
 	love.graphics.draw(backgroundLayer, bgPos, 0, 0, 1.56, 1.56, 0, 200)
 	love.graphics.draw(backgroundLayer, bgPos + self.width, 0, 0, 1.56, 1.56, 0, 200)

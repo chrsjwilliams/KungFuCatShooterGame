@@ -77,7 +77,7 @@ function love.update(dt)
 		startScreen(dt)
 	elseif (state == GAME_PLAY) then
 		gameScreen(dt)
-	elseif (state == GAME_END) then
+	elseif (state == GAME_OVER) then
 		endScreen(dt)
 	elseif (state == GAME_TEST) then
 		testScreen(dt)
@@ -107,8 +107,6 @@ end
 
 function endScreen(dt)
 	gameWorld1:update_GAME_END(dt)
-	player1:update_GAME_END(dt)
-	enemy1:update_GAME_END(dt)
 end
 
 function love.draw()
@@ -130,7 +128,14 @@ function love.draw()
 		love.graphics.setColor(255, 255, 255)
 		love.graphics.print(text, 10,10)
 	elseif (state == GAME_OVER) then
+		
 		drawEndScreen()
+		love.graphics.setFont(titleFont)
+		text = "GAME OVER"
+		love.graphics.print(text, gameWorld1:getWidth()/5, gameWorld1:getWidth()* (1/9))
+		love.graphics.setFont(gameFont)
+		text = "\n\nRatbots Killed: " .. enemiesKilled
+		love.graphics.print(text, gameWorld1:getWidth()* (7/18), gameWorld1:getWidth()* (3/9))
 	elseif (state == GAME_TEST) then
 		drawTestScreen()
 	end
@@ -138,12 +143,12 @@ function love.draw()
 end
 
 function drawStartScreen()
-	gameWorld1:drawStartScreen()
+	gameWorld1:draw()
 	love.graphics.setColor(255, 255, 255)
 end
 
 function drawGameScreen()
-	gameWorld1:drawGameScreen()
+	gameWorld1:draw()
 	
 	player1:draw()
 	enemy1:draw()
@@ -158,7 +163,7 @@ function drawEndScreen()
 end
 
 function drawTestScreen()
-	gameWorld1:drawTestScreen()
+	gameWorld1:draw()
 	player1:draw()
 	enemy1:draw()
 	love.graphics.setColor(255, 255, 255)	

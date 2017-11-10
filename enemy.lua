@@ -140,8 +140,8 @@ end
 -- check if we should kill player.. go die!!
 function checkCollisions()
   for index, enemy in ipairs(enemies) do
-    if playerAlive and (intersects(player, enemy) or intersects(enemy, player)) then
-      --playerAlive = false
+    if (intersects(player, enemy) or intersects(enemy, player)) then
+      state = GAME_OVER
       break
     end
 
