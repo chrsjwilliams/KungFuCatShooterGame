@@ -64,6 +64,7 @@ end
 
 function restartGame()
 	gameWorld1:loadGameWorld()
+	enemy1:load()
 	player1:setPostion(10, 10)
 	enemiesKilled = 0
 	state = GAME_PLAY
