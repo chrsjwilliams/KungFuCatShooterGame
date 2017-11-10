@@ -4,41 +4,43 @@ enemy = {}
 
 
 enemy.__index = enemy
+
 --load enemy image and animation
 function enemy:load()
-
+  -- enemy is the walkers
   walkerImage = love.graphics.newImage("media/walker2.png")
-
+  -- default player if we didn't get a player
   player = {xPos = 0, yPos = 0, angle = 0, width = 64, height = 64, speed=200, img=walkerImage}
 
-
+  -- here is the player animation
   local g = anim8.newGrid(120, 80, walkerImage:getWidth(), walkerImage:getHeight())
     
-    runAnim = anim8.newAnimation(g('1-6',1), 0.05)
-    AttackAnim = anim8.newAnimation(g('1-6',2), 0.05)
+  runAnim = anim8.newAnimation(g('1-6',1), 0.05)
+  AttackAnim = anim8.newAnimation(g('1-6',2), 0.05)
 
-    currentAnim = runAnim
+  currentAnim = runAnim
+  -- set the enemy spawn timer
+  spawnTimer = 0
+  spawnTimerMax = 1
+  -- how quickly our walker walk
+  walkerSpeed = 200
+  -- how quickly walker charge to player
+  chargeSpeed = 500
+  --enemies group where put all the enemies
+  enemies = {}
+  return self
 
-    spawnTimer = 0
-
-    spawnTimerMax = 1
-
-    walkerSpeed = 200
-    chargeSpeed = 500
-
-    enemies = {}
-    return self
 end
 
 --draw enemy
 function enemy:draw()
-
+  -- draw the enemy here
   for index, enemy in ipairs(enemies) do
     currentAnim:draw(enemy.img, enemy.xPos, enemy.yPos, enemy.angle, 1, 1)
   end
 end
 
-
+--update the enemies spawn, check collision
 function enemy:update(dt)
 
     updateEnemies(dt)
@@ -46,6 +48,7 @@ function enemy:update(dt)
     currentAnim:update(dt)
 end
 
+--to see if there is enough enemies, otherwise spawn more
 function updateEnemies(dt)
   if spawnTimer > 0 then
     spawnTimer = spawnTimer - dt
@@ -62,7 +65,7 @@ function updateEnemies(dt)
     end
   end
 end
-
+-- how do we different type of  enemies
 function spawnEnemy()
   y = love.math.random(0, love.graphics.getHeight() - 64)
   enemyType = love.math.random(0, 2)
@@ -88,12 +91,14 @@ function Enemy:new (o)
   return o
 end
 
+-- one type of enemy just move left
 function moveLeft(obj, dt)
   currentAnim = runAnim
   obj.xPos = obj.xPos - obj.speed * dt
   return moveLeft
 end
 
+-- one type of enemy will move to player
 function moveToPlayer(obj, dt)
   xSpeed = math.sin(math.rad (60)) * obj.speed
   ySpeed = math.cos(math.rad (60)) * obj.speed
@@ -113,6 +118,7 @@ function moveToPlayer(obj, dt)
   return moveToPlayer
 end
 
+-- one type of enemy will charge to player
 function chargePlayer(obj, dt)
   xDistance = math.abs(obj.xPos - player.xPos)
   yDistance = math.abs(obj.yPos - player.yPos)
@@ -126,8 +132,7 @@ function chargePlayer(obj, dt)
   return chargePlayer
 end
 
--- Helper functions
-
+-- check if we should kill player.. go die!!
 function checkCollisions()
   for index, enemy in ipairs(enemies) do
     if playerAlive and (intersects(player, enemy) or intersects(enemy, player)) then
@@ -145,6 +150,7 @@ function checkCollisions()
   end
 end
 
+-- check if two game object counter with each other, someone must die...
 function intersects(rect1, rect2)
   if rect1.xPos < rect2.xPos and rect1.xPos + rect1.width > rect2.xPos and
      rect1.yPos < rect2.yPos and rect1.yPos + rect1.height > rect2.yPos then
