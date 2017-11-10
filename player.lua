@@ -4,11 +4,10 @@ require 'gameWorld'
 
 player = {xPos = 0, yPos = 0, width = 140, height = 140, speed = 200}
 player.__index = player
+bullets = {}
 
 function player:makePlayer() --	whatever parameters you want
 playerImg = love.graphics.newImage("media/player.png")
-
-bullets = {}
 background = love.graphics.newImage('media/iPadMenu_atlas0.png')
 background:setFilter("nearest", "nearest")
 tilesetImage=love.graphics.newImage('media/play1_atlas0.png')

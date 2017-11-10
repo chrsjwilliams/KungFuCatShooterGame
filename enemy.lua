@@ -141,13 +141,13 @@ function checkCollisions()
       break
     end
 
-    -- for index2, torpedo in ipairs(torpedoes) do
-    --   if intersects(enemy, torpedo) then
-    --     table.remove(enemies, index)
-    --     table.remove(torpedoes, index2)
-    --     break
-    --   end
-    -- end
+     for index2, bullet in ipairs(bullets) do
+       if intersects(enemy, bullet) then
+         table.remove(enemies, index)
+         table.remove(bullet, index2)
+         break
+       end
+     end
   end
 end
 
