@@ -29,6 +29,8 @@ function enemy:load()
   chargeSpeed = 500
   --enemies group where put all the enemies
   enemies = {}
+  hit		= love.audio.newSource("media/bomb_hit.mp3", "static")
+  explode	= love.audio.newSource("media/bomb_explode.mp3", "static")
   return self
 
 end
@@ -36,6 +38,7 @@ end
 --draw enemy
 function enemy:draw()
   -- draw the enemy here
+  love.graphics.setColor(255, 0, 0)
   for index, enemy in ipairs(enemies) do
     currentAnim:draw(enemy.img, enemy.xPos, enemy.yPos, enemy.angle, 1, 1)
   end
@@ -143,6 +146,8 @@ function checkCollisions()
 
      for index2, bullet in ipairs(bullets) do
        if intersects(enemy, bullet) then
+		 hit:play()
+		 explode:play()
          table.remove(enemies, index)
          table.remove(bullet, index2)
          break

@@ -8,8 +8,6 @@ bullets = {}
 
 function player:makePlayer() --	whatever parameters you want
 playerImg = love.graphics.newImage("media/player.png")
-background = love.graphics.newImage('media/iPadMenu_atlas0.png')
-background:setFilter("nearest", "nearest")
 tilesetImage=love.graphics.newImage('media/play1_atlas0.png')
 spaceShitAtlas = love.graphics.newImage('media/iPadPlay2_atlas0.png')
 tilesetImage:setFilter("nearest", "nearest") -- this "linear filter" removes some artifacts if we were to scale the tiles
@@ -34,7 +32,9 @@ local g = anim8.newGrid(140, 140, playerImg:getWidth(), playerImg:getHeight())
 idleAnim = anim8.newAnimation(g('1-2',3), .25)
 shootAnim = anim8.newAnimation(g('1-6',2), .05)
 currentPlayerAnim = idleAnim
-	return self
+	preShoot	= love.audio.newSource("media/bomb_pre.mp3", "static")
+	launchShot	= love.audio.newSource("media/bomb_launch.mp3", "static")
+	return self	
 end
 
 function player:initPlayer() --	whatever parameters you want
@@ -58,14 +58,13 @@ end
 function player:update_GAME_END(dt) --	whatever parameters you want
 end
 
-function player:update_GAME_TEST(dt) --	whatever parameters you want
+function player:update_GAME_PLAY(dt) --	whatever parameters you want
 updatePlayer(dt)
 updateBullets(dt)
 currentPlayerAnim:update(dt)
 end
 
 function player:draw() --	whatever parameters you want
- love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
  love.graphics.setColor(255, 255, 255)
  currentPlayerAnim:draw(playerImg, player.xPos, player.yPos, 0, .5)
  for index, bullet in ipairs(bullets) do
@@ -109,6 +108,7 @@ elseif left and player.xPos > 0 then
 end
 
 if love.keyboard.isDown("space") then 
+	preShoot:play()
 	bulletSpeed = bulletStartSpeed
 	bulletSpeed = bulletSpeed + player.speed * 2
 	currentPlayerAnim = shootAnim
@@ -124,20 +124,23 @@ end
 end
 
 function spawnBullet(x, y, speed)
-if canFire then
-	bullet = {xPos = x, yPos = y, width = 16, height = 16, speed = speed, img = bulletImg}
-	table.insert(bullets, bullet)
-
-	canFire = false
-	bulletTimer = bulletTimerMax
-end
+	if canFire then
+		preShoot:stop()
+		bullet = {xPos = x, yPos = y, width = 16, height = 16, speed = speed, img = bulletImg}
+		table.insert(bullets, bullet)
+		launchShot:play()
+		canFire = false
+		bulletTimer = bulletTimerMax
+	end
 end
 
 function updateBullets(dt)
+	
 for index, bullet in ipairs(bullets) do
 	bullet.xPos = bullet.xPos + dt * bullet.speed
 	if bullet.speed < bulletMaxSpeed then
 		bullet.speed = bulletSpeed + dt * 100
+		
 	end
 	if bullet.xPos > love.graphics.getWidth() then
 	table.remove(bullets, index)

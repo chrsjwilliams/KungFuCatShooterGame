@@ -14,7 +14,7 @@ GAME_START	= 0
 GAME_PLAY	= 1
 GAME_OVER	= 2
 GAME_TEST	= 3
-state		= GAME_TEST
+state		= GAME_PLAY
 
 --	Main should handle the life cycle of our game.
 --	Ideally ALL state changes should be done through main
@@ -52,11 +52,12 @@ function love.load()
 	
 	-- Sets font size to 12
 	love.graphics.setNewFont(12)
+	restartGame()
 end
 
 function restartGame()
+	gameWorld1:loadGameWorld()
 	state = GAME_PLAY
-	love.load()
 end
 
 
@@ -89,19 +90,13 @@ end
 function gameScreen(dt)
 	gameWorld1:update_GAME_PLAY(dt)
 	player1:update_GAME_PLAY(dt)
-	enemy1:update_GAME_PLAY(dt)
+	enemy1:update(dt)
 end
 
 function endScreen(dt)
 	gameWorld1:update_GAME_END(dt)
 	player1:update_GAME_END(dt)
 	enemy1:update_GAME_END(dt)
-end
-
-function testScreen(dt)
-	gameWorld1:update_GAME_TEST(dt)
-	player1:update_GAME_TEST(dt)
-	enemy1:update(dt)
 end
 
 function love.draw()
@@ -126,10 +121,10 @@ function drawStartScreen()
 end
 
 function drawGameScreen()
-	gameWorld1:draw()
+	gameWorld1:drawGameScreen()
 	
-	entities:add(player1:draw())
-	entities:add(enemy1:draw())
+	player1:draw()
+	enemy1:draw()
 	
 	love.graphics.setColor(255, 255, 255)
 end
