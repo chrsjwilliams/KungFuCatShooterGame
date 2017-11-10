@@ -63,9 +63,9 @@ function love.load()
 end
 
 function restartGame()
-	gameFont = love.graphics.newFont("media/Flixel.ttf", 10)
-	love.graphics.setFont(gameFont)
 	gameWorld1:loadGameWorld()
+	player1:setPostion(10, 10)
+	enemiesKilled = 0
 	state = GAME_PLAY
 end
 
@@ -107,6 +107,10 @@ end
 
 function endScreen(dt)
 	gameWorld1:update_GAME_END(dt)
+	if love.keyboard.isDown("space") then 
+		restartGame()
+		state = GAME_START
+	end
 end
 
 function love.draw()

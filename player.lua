@@ -41,6 +41,11 @@ function player:initPlayer() --	whatever parameters you want
 	moveSpeed = 130
 end
 
+function player:setPostion(x, y)
+	player.xPos = x
+	player.yPos = y
+end
+
 function player:Move(x,y)
 	body:setLinearVelocity(x, y)
 end
