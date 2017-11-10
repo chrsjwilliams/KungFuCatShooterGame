@@ -27,6 +27,7 @@ function enemy:load()
   walkerSpeed = 200
   -- how quickly walker charge to player
   chargeSpeed = 500
+  enemiesKilled = 0
   --enemies group where put all the enemies
   enemies = {}
   hit		= love.audio.newSource("media/bomb_hit.mp3", "static")
@@ -148,6 +149,7 @@ function checkCollisions()
        if intersects(enemy, bullet) then
 		 hit:play()
 		 explode:play()
+		 enemiesKilled = enemiesKilled + 1
          table.remove(enemies, index)
          table.remove(bullet, index2)
          break

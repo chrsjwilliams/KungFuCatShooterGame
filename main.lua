@@ -51,7 +51,11 @@ function love.load()
 	--	more if we want different layers in our game (ie foreground, background)
 	
 	-- Sets font size to 12
-	love.graphics.setNewFont(12)
+	
+	mainFont = love.graphics.newFont("media/Flixel.ttf", 10)
+	love.graphics.setFont(mainFont)
+
+	text = "Hello"
 	restartGame()
 end
 
@@ -100,15 +104,21 @@ function endScreen(dt)
 end
 
 function love.draw()
+	
+
 	if(state == GAME_START) then
 		drawStartScreen()
 	elseif (state == GAME_PLAY) then
 		drawGameScreen()
+		text = "Rat-bots Destroyed: " .. enemiesKilled
+		love.graphics.setColor(255, 255, 255)
+		love.graphics.print(text, 10,10)
 	elseif (state == GAME_OVER) then
 		drawEndScreen()
 	elseif (state == GAME_TEST) then
 		drawTestScreen()
 	end
+	
 end
 
 function drawStartScreen()
