@@ -1,42 +1,40 @@
 local anim8 = require 'anim8'
 require 'bullet'
 require 'gameWorld'
-player = { 
-  tileSize = 16,
-  xPos,
-  yPos,
-  moveSpeed
-}
 
+player = {xPos = 0, yPos = 0, width = 140, height = 140, speed = 200}
 player.__index = player
 
-function player:makePlayer(_world,xPos, yPos) --	whatever parameters you want
-	body = love.physics.newBody(_world, xPos, yPos, "dynamic")
-	-- Create a shape for the body.
-	player_box = love.physics.newRectangleShape(15, 15, 30, 30)
+function player:makePlayer() --	whatever parameters you want
+playerImg = love.graphics.newImage("media/player.png")
 
-	-- Create fixture between body and shape
-	fixture = love.physics.newFixture(body, player_box)
+bullets = {}
+background = love.graphics.newImage('media/iPadMenu_atlas0.png')
+background:setFilter("nearest", "nearest")
+tilesetImage=love.graphics.newImage('media/play1_atlas0.png')
+spaceShitAtlas = love.graphics.newImage('media/iPadPlay2_atlas0.png')
+tilesetImage:setFilter("nearest", "nearest") -- this "linear filter" removes some artifacts if we were to scale the tiles
+tileSize = 16
 
-	-- We can now refer to the player using the string "Player"
-	fixture:setUserData("Player")
-  
-	-- Calculate the mass of the body based on attatched shapes.
-	-- This gives realistic simulations.
-	body:setMassData(player_box:computeMass( 1 ))
+shipImg = love.graphics.newQuad(129, 0, 256, 128, spaceShitAtlas:getWidth(), spaceShitAtlas:getHeight())
 
-	body:setFixedRotation(true)
+bulletImg = love.graphics.newQuad(0, 28, 
+    40, 78,
+    tilesetImage:getWidth(), tilesetImage:getHeight())
 
-	playerImg = love.graphics.newImage("media/player2.png")
-	local g = anim8.newGrid(30, 30, playerImg:getWidth(), playerImg:getHeight())
-	runAnim = anim8.newAnimation(g('1-14',1), 0.05)
-	jumpAnim = anim8.newAnimation(g('15-19',1), 0.1)
-	inAirAnim = anim8.newAnimation(g('1-8',2), 0.1)
-	rollAnim = anim8.newAnimation(g('9-19',2), 0.05)
+ tilesetBatch = love.graphics.newSpriteBatch(tilesetImage, 1500)
+ --bullet = tilesetBatch:add(tileQuads[0], player.xPos, player.yPos, 0)
 
-	-- Sets current animation
-	currentAnim = inAirAnim
-	self:initPlayer()
+ canFire = false;
+ bulletTimerMax = 0.2
+ bulletTimer = bulletTimerMax
+ bulletStartSpeed = 100
+ bulletMaxSpeed = 300
+
+local g = anim8.newGrid(140, 140, playerImg:getWidth(), playerImg:getHeight())
+idleAnim = anim8.newAnimation(g('1-2',3), .25)
+shootAnim = anim8.newAnimation(g('1-6',2), .05)
+currentPlayerAnim = idleAnim
 	return self
 end
 
@@ -51,15 +49,6 @@ function player:shoot()
 bullet:makeBullet(gameWorld:getWorld(), self.xPos, self.yPos, playerImg, 100)
 bullet:draw()
 end
-function love.keypressed( key, isrepeat )
-	if (key == "up" and (state == GAME_PLAY or state == GAME_TEST)) then
-		player:Move(0, -moveSpeed)
-	elseif (key == "down" and (state == GAME_PLAY or state == GAME_TEST)) then
-		player:Move(0, moveSpeed)
-	elseif(key == "space"  and (state == GAME_PLAY or state == GAME_TEST)) then
-		player:shoot()
-	end
-end
 
 function player:update_GAME_START(dt) --	whatever parameters you want
 end
@@ -71,13 +60,88 @@ function player:update_GAME_END(dt) --	whatever parameters you want
 end
 
 function player:update_GAME_TEST(dt) --	whatever parameters you want
+updatePlayer(dt)
+updateBullets(dt)
+currentPlayerAnim:update(dt)
 end
 
 function player:draw() --	whatever parameters you want
-	love.graphics.setColor(0, 255, 0)
-	return currentAnim:draw(playerImg, body:getX(), body:getY(), body:getAngle())
+ love.graphics.draw(background, 0, 0, 0, 1.56, 1.56, 0, 200)
+ love.graphics.setColor(255, 255, 255)
+ currentPlayerAnim:draw(playerImg, player.xPos, player.yPos, 0, .5)
+ for index, bullet in ipairs(bullets) do
+	love.graphics.draw(tilesetImage, bullet.img, bullet.xPos, bullet.yPos, -359.75, .5)
+	end
+ love.graphics.draw(spaceShitAtlas, shipImg, player.xPos + player.width - 65, player.yPos + 10, 0, -1, 1)
 end
 
 function player:getMoveSpeed()
 	return moveSpeed
+end
+
+function updatePlayer(dt)
+down = love.keyboard.isDown("down")
+up = love.keyboard.isDown("up")
+left = love.keyboard.isDown("left")
+right = love.keyboard.isDown("right")
+
+speed = player.speed
+
+downUp = love.keyboard.isDown("down") or love.keyboard.isDown("up")
+leftRight = love.keyboard.isDown("left") or love.keyboard.isDown("right")
+
+if(down or up or left or right) then
+end
+
+if(downUp and leftRight) then 
+	speed = speed / math.sqrt(2)
+end
+
+if down and player.yPos < love.graphics.getHeight() - player.height then
+	player.yPos = player.yPos + dt * speed
+elseif up and player.yPos > 0 then
+	player.yPos = player.yPos - dt * speed
+end
+
+if right and player.xPos < love.graphics.getWidth() - player.width then
+	player.xPos = player.xPos + dt * speed
+elseif left and player.xPos > 0 then
+	player.xPos = player.xPos - dt * speed
+end
+
+if love.keyboard.isDown("space") then 
+	bulletSpeed = bulletStartSpeed
+	bulletSpeed = bulletSpeed + player.speed * 2
+	currentPlayerAnim = shootAnim
+	spawnBullet(player.xPos + player.width - 75, player.yPos + player.height/2 + 25, bulletSpeed)
+end
+
+if bulletTimer > 0 then
+	bulletTimer = bulletTimer - dt
+else
+currentPlayerAnim = idleAnim
+	canFire = true
+end
+end
+
+function spawnBullet(x, y, speed)
+if canFire then
+	bullet = {xPos = x, yPos = y, width = 16, height = 16, speed = speed, img = bulletImg}
+	table.insert(bullets, bullet)
+
+	canFire = false
+	bulletTimer = bulletTimerMax
+end
+end
+
+function updateBullets(dt)
+for index, bullet in ipairs(bullets) do
+	bullet.xPos = bullet.xPos + dt * bullet.speed
+	if bullet.speed < bulletMaxSpeed then
+		bullet.speed = bulletSpeed + dt * 100
+	end
+	if bullet.xPos > love.graphics.getWidth() then
+	table.remove(bullets, index)
+	end
+  end
 end

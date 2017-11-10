@@ -38,7 +38,7 @@ function love.load()
 	--	Everything related to the player should be in player class.
 	--	Input for the game is in the player.lua file
 	--	Player is green
-	player1 = player:makePlayer(gameWorld1:getWorld(), gameWorld1:getWidth() / 10, gameWorld1:getHeight() / 2)
+	player1 = player:makePlayer()
 	
 	--	Make Enemy Here
 	--	All enemy logic should be handled here. I'm not sure if this
@@ -145,7 +145,7 @@ end
 
 function drawTestScreen()
 	gameWorld1:drawTestScreen()
-
+	player1:draw()
 	enemy1:draw()
 	love.graphics.setColor(255, 255, 255)	
 end

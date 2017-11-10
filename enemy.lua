@@ -1,4 +1,5 @@
 local anim8 = require 'anim8'
+require 'player'
 
 enemy = {}
 
@@ -10,7 +11,7 @@ function enemy:load()
   -- enemy is the walkers
   walkerImage = love.graphics.newImage("media/walker2.png")
   -- default player if we didn't get a player
-  player = {xPos = 0, yPos = 0, angle = 0, width = 64, height = 64, speed=200, img=walkerImage}
+  --player = {xPos = 0, yPos = 0, angle = 0, width = 64, height = 64, speed=200, img=walkerImage}
 
   -- here is the player animation
   local g = anim8.newGrid(120, 80, walkerImage:getWidth(), walkerImage:getHeight())
