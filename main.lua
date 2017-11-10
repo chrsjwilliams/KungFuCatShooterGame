@@ -59,10 +59,13 @@ function love.load()
 	love.graphics.setFont(gameFont)
 
 	text = "Hello"
+	titleScreenMusic	= love.audio.newSource("media/machrunner-title.mp3", "stream")
+	titleScreenMusic:play()
 	--restartGame()
 end
 
 function restartGame()
+	titleScreenMusic:stop()
 	gameWorld1:loadGameWorld()
 	enemy1:load()
 	player1:setPostion(10, 10)
@@ -89,6 +92,7 @@ function startScreen(dt)
 	gameWorld1:update_GAME_START(dt)
 
 	if love.keyboard.isDown("space") then 
+		gameWorld1:loadGameWorld()
 		state = GAME_PLAY
 	end
 

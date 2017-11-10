@@ -142,6 +142,8 @@ function checkCollisions()
   for index, enemy in ipairs(enemies) do
     if (intersects(player, enemy) or intersects(enemy, player)) then
       state = GAME_OVER
+	  bgm:stop()
+	  titleScreenMusic:play()
       break
     end
 
